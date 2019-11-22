@@ -15,6 +15,14 @@ def recreate_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
+    
+    
+@cli.command("fill_db")
+def fill_db():
+
+    db.session.add(User(username="ivica", email="ivica@server.com"))
+    db.session.add(User(username="marica", email="marica@server.com"))
+    db.session.commit()
 
 
 @cli.command()
