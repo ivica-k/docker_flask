@@ -38,6 +38,9 @@ class TestUserService(BaseTestCase):
             self.assertIn("ivica", data.get("data").get("username"))
             self.assertIn("ivica@server.com", data.get("data").get("email"))
 
+            db.session.query(User).filter(User.id == user.id).delete()
+            db.session.commit()
+
 
     def test_add_user_duplicate_email(self):
         with self.client:
@@ -124,20 +127,20 @@ class TestUserService(BaseTestCase):
 
 
     def test_all_users(self):
+        db.session.query(User).delete()
+        db.session.commit()
+
         add_user("ivica", "ivica@server.com")
         add_user("marica", "marica@server.com")
 
         with self.client:
             response = self.client.get("/users")
             data = json.loads(response.data.decode())
-            print("")
-            print(data)
-            print("")
 
             users = data.get("data").get("users")
 
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(len(users), 3)
+            self.assertEqual(len(users), 2)
             self.assertIn(
                 users[0].get("username"),
                 "ivica"
